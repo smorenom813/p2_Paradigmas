@@ -1,41 +1,49 @@
-﻿using Practica1;
+﻿
 
-namespace Practice1
+namespace Practice2
 {
-    class PoliceCar : Vehicle
+    class PoliceCar : Plate
     {
         //constant string as TypeOfVehicle wont change allong PoliceCar instances
         private const string typeOfVehicle = "Police Car"; 
         private bool isPatrolling;
-        private SpeedRadar speedRadar;
+        private SpeedRadar? speedRadar;
         private bool isChasing;
         private string speedingVehiclePlate;
         private PoliceStation policeStation;
 
 
-        public PoliceCar(string plate, PoliceStation station) : base(typeOfVehicle, plate)
+        public PoliceCar(string plate, PoliceStation station) : base(plate, typeOfVehicle)
         {
             isPatrolling = false;
-            speedRadar = new SpeedRadar();
+            speedRadar = null;
             isChasing = false;
             speedingVehiclePlate = "";
             policeStation = station;
         }
 
-        public void UseRadar(Vehicle vehicle)
+        public void UseRadar(Plate vehicle)
         {
             if (isPatrolling)
+
             {
-                float VehicleSpeed = speedRadar.TriggerRadar(vehicle);
-                string meassurement = speedRadar.GetLastReading();
-                Console.WriteLine(WriteMessage($"Triggered radar. Result: {meassurement}"));
+                if (speedRadar != null)
+                {
+                    float VehicleSpeed = speedRadar.TriggerRadar(vehicle);
+                    string meassurement = speedRadar.GetLastReading();
+                    Console.WriteLine(WriteMessage($"Triggered radar. Result: {meassurement}"));
 
-                if (VehicleSpeed > speedRadar.GetLegalSpeed()) {
-                    isChasing = true;
-                    speedingVehiclePlate = vehicle.GetPlate();
-                    policeStation.ActivateAlert(speedingVehiclePlate, this);
+                    if (VehicleSpeed > speedRadar.GetLegalSpeed())
+                    {
+                        isChasing = true;
+                        speedingVehiclePlate = vehicle.GetPlate();
+                        policeStation.ActivateAlert(speedingVehiclePlate, this);
+                    }
                 }
-
+                else
+                {
+                    Console.WriteLine(WriteMessage("No radar installed."));
+                }
             }
             else
             {
@@ -73,20 +81,40 @@ namespace Practice1
                 Console.WriteLine(WriteMessage("was not patrolling."));
             }
         }
+        public void SetRadar()
+        {
+            speedRadar = new SpeedRadar();
+        }
 
         public void PrintRadarHistory()
-        {
-            Console.WriteLine(WriteMessage("Report radar speed history:"));
-            foreach (float speed in speedRadar.SpeedHistory)
+        {   if (speedRadar != null)
             {
-                Console.WriteLine(speed);
+                Console.WriteLine(WriteMessage("Report radar speed history:"));
+                foreach (float speed in speedRadar.SpeedHistory)
+                {
+                    Console.WriteLine(speed);
+                }
+            }
+            else
+            {
+                Console.WriteLine(WriteMessage("No radar installed."));
+
             }
         }
 
         public void ReceiveAlert(string VehiclePlate)
         {
-            isChasing = true;
-            speedingVehiclePlate = VehiclePlate;
+            if (isPatrolling)
+            {
+                isChasing = true;
+                speedingVehiclePlate = VehiclePlate;
+                Console.WriteLine(WriteMessage($"Recieved Alert, start chasing {VehiclePlate}"));
+            }
+            else
+            {
+                Console.WriteLine(WriteMessage("was not patrolling."));
+            }
+
 
         }
     }

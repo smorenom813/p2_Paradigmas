@@ -1,5 +1,5 @@
 ﻿
-namespace Practice1
+namespace Practice2
 {
     class PoliceStation
     {
@@ -15,13 +15,14 @@ namespace Practice1
         public void RegisterPoliceCar(PoliceCar car)
         {
             policeCars.Add(car);
+            Console.WriteLine(WriteMessage($"Police Car with plate {car.GetPlate()} registered in the police station"));
             
         }
 
         public void ActivateAlert(string speedingVehiclePlate, PoliceCar triggeringCar)
-        { 
+        {
 
-           
+            Console.WriteLine(WriteMessage($"Alert received from police car with plate : {triggeringCar.GetPlate()}, starting operation to chase {speedingVehiclePlate}"));
             foreach (var car in policeCars)
             {
                 if (car != triggeringCar)
@@ -29,6 +30,10 @@ namespace Practice1
                     car.ReceiveAlert(speedingVehiclePlate);
                 }
             }
+        }
+        public virtual string WriteMessage(string message)
+        {
+            return $"Police Station says:{message}";
         }
     }
 

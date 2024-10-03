@@ -1,7 +1,7 @@
 ﻿
-namespace Practice1{
+namespace Practice2{
 
-    class City
+    class City : IMessageWritter
     {
         private PoliceStation policeStation;
         private List<Taxi> taxis;
@@ -12,22 +12,26 @@ namespace Practice1{
             taxis = new List<Taxi>();
         }
 
-            public void RegisterPoliceCar(PoliceCar car)
-            {
-                policeStation.RegisterPoliceCar(car);
-            }
 
-            public void RegisterTaxi(Taxi taxi)
-            {
-                taxis.Add(taxi);
-                Console.WriteLine($"Taxi registrado: {taxi.GetPlate()}");
-            }
 
-            public void RemoveTaxi(string plate)
-            {
-                taxis.RemoveAll(t => t.GetPlate() == plate);
-            }
+        public void RegisterTaxi(Taxi taxi)
+        {
+            taxis.Add(taxi);
+            Console.WriteLine(WriteMessage($"Taxi with plate {taxi.GetPlate()} registered"));
+
         }
+
+        public void RemoveTaxi(string plate)
+        {
+            taxis.RemoveAll(t => t.GetPlate() == plate);
+            Console.WriteLine(WriteMessage($"Taxi with plate {plate} removed"));
+        }
+
+        public virtual string WriteMessage(string message)
+        {
+            return $"City :{message}";
+        }
+    }
         }
 
 
